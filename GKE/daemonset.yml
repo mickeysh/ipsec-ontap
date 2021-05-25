@@ -1,0 +1,84 @@
+
+kind: DaemonSet 
+apiVersion: apps/v1 
+metadata: 
+  name: startup-script 
+  labels: 
+    app: startup-script 
+spec: 
+  selector:
+    matchLabels:
+      app: startup-script
+  template: 
+    metadata: 
+      labels: 
+        app: startup-script 
+    spec: 
+      hostPID: true 
+      containers: 
+      - name: startup-script 
+        image: gcr.io/google-containers/startup-script:v1 
+        imagePullPolicy: Always 
+        securityContext: 
+          privileged: true 
+        env: 
+        - name: IPSEC_TARGET_CIDR
+          valueFrom:
+            configMapKeyRef:
+              name: ipsec-config
+              key: ipsec_target_cidr
+        - name: IPSEC_SOURCE_CIDR
+          valueFrom:
+            configMapKeyRef:
+              name: ipsec-config
+              key: ipsec_source_cidr
+        - name: IPSEC_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: ipsec-config
+              key: ipsec_secret
+        - name: STARTUP_SCRIPT 
+          value: | 
+            #! /bin/bash
+            sudo apt update -y
+            sudo apt install -y strongswan strongswan-pki charon-systemd strongswan-swanctl
+
+            tee /etc/swanctl/swanctl.conf > /dev/null <<EOF
+            # DaemonSet update
+            # Include config snippets
+            # include conf.d/*.conf
+            connections {
+                pol_gke_nfs_client {
+                    children {
+                        pol_gke_nfs_client {
+                            esp_proposals = aes256gcm16
+                            mode = transport
+                            start_action = trap
+                            local_ts = ${IPSEC_SOURCE_CIDR}[any/any]
+                            remote_ts = ${IPSEC_TARGET_CIDR}[any/any]
+                            rekey_time = 28800
+                            rekey_bytes = 0
+                                            }
+                            }
+                    keyingtries = 3
+                    version = 2
+                    local_addrs = ${IPSEC_SOURCE_CIDR}
+                    remote_addrs = ${IPSEC_TARGET_CIDR}
+                    rekey_time = 86400
+                    proposals = aes256-sha384-ecp384
+                    local {
+                        auth = psk
+                        id = ${IPSEC_SOURCE_CIDR}
+            } remote {
+                        auth = psk
+                        id = ${IPSEC_TARGET_CIDR}
+            } }
+            } secrets {
+                ike-pol_gke_nfs_client {
+                    secret = ${IPSEC_SECRET}
+                    id = ${IPSEC_TARGET_CIDR}
+            } }
+            EOF
+
+            sudo swanctl --load-all
+            echo done 
