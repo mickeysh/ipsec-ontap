@@ -2,4 +2,4 @@
 # defaults file for ipsec-config
 ipsec_target_cidr: 0.0.0.0/32
 ipsec_source_cidr: 0.0.0.0/0
-ipsec_secret: wWTZINNo8kUCPVicZyDssX1qe6H8Rno/
+ipsec_secret: abcd
