@@ -1,0 +1,20 @@
+---
+ipsec:
+  hosts:
+    10.3.2.28:
+    10.3.2.21:
+    10.3.2.32:
+  vars:
+    ansible_connection: ssh
+    ansible_user: mshaul
+    ansible_ssh_private_key_file: ~/.ssh/google_compute_engine
+    ansible_python_interpreter: /usr/bin/python3
+all:  
+  vars: 
+    ipsec_target_cidr: 10.3.2.81/32
+    ipsec_source_cidr: 10.3.2.0/24
+    ipsec_secret: wWTZINNo8kUCPVicZyDssX1qe6H8Rno/
+    ontap_api_interface: 10.3.2.83
+    ontap_user: admin
+    ontap_password: Netapp1!
+

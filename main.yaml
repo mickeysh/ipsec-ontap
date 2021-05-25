@@ -1,0 +1,30 @@
+---
+# - hosts: localhost
+#   collections:
+#     - netapp.ontap
+#   tasks:
+#     - name: config IPSec for ONTAP
+#       na_ontap_command:
+#         hostname: "{{ ontap_api_interface }}"
+#         username: "{{ ontap_user }}"
+#         password: "{{ ontap_password }}"
+#         https: true
+#         validate_certs: false
+#         command: ['security', 'ipsec', 'config', 'config', '-is-enabled', 'true']
+#     - name: config IPSec policy for ONTAP
+#       na_ontap_command:
+#         hostname: "{{ ontap_api_interface }}"
+#         username: "{{ ontap_user }}"
+#         password: "{{ ontap_password }}"
+#         https: true
+#         validate_certs: false
+#         command: ['security', 'ipsec', 'policy', 'create', '-vserver', 'svm_gketest', '-name', 'ipsec_test', '-local-ip-Subnets', '"{{ ipsec_target_cidr }}"', '-remote-ip-subnets', '"{{ ipsec_source_cidr }}"', '-shared-key', '"{{ ipsec_secret }}"']
+- hosts: ipsec
+  tasks:
+    - name: install IPSec on servers
+      include_role:
+        name: ipsec-config
+      # vars:
+      #   ipsec_target_cidr: 10.3.2.81/32
+      #   ipsec_source_cidr: 10.3.2.0/24
+      #   ipsec_secret: wWTZINNo8kUCPVicZyDssX1qe6H8Rno/
