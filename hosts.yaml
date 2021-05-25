@@ -6,7 +6,7 @@ ipsec:
     10.3.2.32:
   vars:
     ansible_connection: ssh
-    ansible_user: mshaul
+    ansible_user: ubuntu
     ansible_ssh_private_key_file: ~/.ssh/google_compute_engine
     ansible_python_interpreter: /usr/bin/python3
 all:  
