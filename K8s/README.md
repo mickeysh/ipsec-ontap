@@ -1,6 +1,6 @@
-# Deploy IPSec for ONTAP on GKE Nodes
+# Deploy IPSec for ONTAP on K8s Nodes
 
-To deploy IPSec for ONTAP on GKE nodes you will need:
+To deploy IPSec for ONTAP on K8s nodes you will need:
 1. Prepare these parameter:
 - ONPTAP DataLIF CIDR block (example: 10.3.2.81/32)
 - GKE Node pool subnet CIDR block (exmaple: 10.3.2.0/24)
